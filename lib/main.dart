@@ -28,6 +28,54 @@ class _HomeState extends State<Home> {
   double dolar;
   double euro;
 
+  final realController = TextEditingController();
+  final dolarController = TextEditingController();
+  final euroController = TextEditingController();
+
+  void _realChanged(String text) {
+    if (text.isEmpty)
+      return;
+
+    if (double.tryParse(text) != null) {
+      double real = double.parse(text);
+      dolarController.text = (real / dolar).toStringAsFixed(2);
+      euroController.text = (real / euro).toStringAsFixed(2);
+
+      return;
+    }
+    realController.text = validNumber(text);
+  }
+
+  void _dolarChanged(String text) {
+    if (text.isEmpty)
+      return;
+
+    if (double.tryParse(text) != null) {
+      double dolar = double.parse(text);
+      realController.text = (dolar * this.dolar).toStringAsFixed(2);
+      euroController.text = (dolar * this.dolar / euro).toStringAsFixed(2);
+
+      return;
+    }
+
+    dolarController.text = validNumber(text);
+  }
+
+  void _euroChanged(String text) {
+    if (text.isEmpty)
+      return;
+
+    if (double.tryParse(text) != null) {
+      double euro = double.parse(text);
+      realController.text = (this.euro * euro).toStringAsFixed(2);
+      dolarController.text = (this.euro * euro / dolar).toStringAsFixed(2);
+
+      return;
+    }
+
+    euroController.text = validNumber(text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +91,6 @@ class _HomeState extends State<Home> {
         centerTitle: true,
       ),
       body: Container(
-        //height: MediaQuery.of(context).size.height,
         height: 1000.0,
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -89,53 +136,14 @@ class _HomeState extends State<Home> {
                             "images/coin_image.png",
                             height: 200.0,
                           ),
-                          TextField(
-                            decoration: InputDecoration(
-                              labelText: "Real",
-                              labelStyle: TextStyle(
-                                color: Colors.indigo[300],
-                              ),
-                              border: OutlineInputBorder(),
-                              prefixText: "R\$ ",
-                            ),
-                            style: TextStyle(
-                              color: Colors.indigo[600],
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15.0,
-                            ),
-                          ),
+                          buildTextField(
+                              "Real", "R\$", realController, _realChanged),
                           Divider(),
-                          TextField(
-                            decoration: InputDecoration(
-                              labelText: "Dólar",
-                              labelStyle: TextStyle(
-                                color: Colors.indigo[300],
-                              ),
-                              border: OutlineInputBorder(),
-                              prefixText: "RS\$ ",
-                            ),
-                            style: TextStyle(
-                              color: Colors.indigo[600],
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15.0,
-                            ),
-                          ),
+                          buildTextField(
+                              "Dólar", "RS\$", dolarController, _dolarChanged),
                           Divider(),
-                          TextField(
-                            decoration: InputDecoration(
-                              labelText: "Euro",
-                              labelStyle: TextStyle(
-                                color: Colors.indigo[300],
-                              ),
-                              border: OutlineInputBorder(),
-                              prefixText: "€ ",
-                            ),
-                            style: TextStyle(
-                              color: Colors.indigo[600],
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15.0,
-                            ),
-                          ),                          
+                          buildTextField(
+                              "Euro", "€", euroController, _euroChanged),
                         ],
                       ),
                     );
@@ -150,4 +158,37 @@ class _HomeState extends State<Home> {
 Future<Map> GetData() async {
   http.Response response = await http.get(url);
   return json.decode(response.body);
+}
+
+Widget buildTextField(
+    String label, String prefix, TextEditingController control, Function func) {
+  return TextField(
+    controller: control,
+    decoration: InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(
+        color: Colors.indigo[300],
+      ),
+      border: OutlineInputBorder(),
+      prefixText: "${prefix} ",
+    ),
+    style: TextStyle(
+      color: Colors.indigo[600],
+      fontWeight: FontWeight.bold,
+      fontSize: 15.0,
+    ),
+    onChanged: func,
+    keyboardType: TextInputType.number,
+  );
+}
+
+String validNumber(String number) {
+  String aux = "";
+
+  for (int i = 0; i < number.length; i++) {
+    if (number[i] == "," || number[i] == "," || int.tryParse(number[i]) != null)
+      aux += number[i];
+  }
+
+  return aux;
 }
