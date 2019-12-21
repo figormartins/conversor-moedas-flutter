@@ -10,8 +10,11 @@ const url = "https://api.hgbrasil.com/finance?key=2805e1ae";
 
 void main() async {
   runApp(MaterialApp(
-    color: Colors.black,
     home: Home(),
+    theme: ThemeData(
+      hintColor: Colors.indigo[400],
+      primaryColor: Colors.indigo[200],
+    ),
     debugShowCheckedModeBanner: false,
   ));
 }
@@ -30,11 +33,18 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Conversor"),
+        title: Text(
+          "Conversor",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         backgroundColor: Colors.deepPurple[900],
         centerTitle: true,
       ),
       body: Container(
+        //height: MediaQuery.of(context).size.height,
+        height: 1000.0,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomLeft,
@@ -56,7 +66,7 @@ class _HomeState extends State<Home> {
                   return Center(
                     child: Loading(
                         indicator: BallPulseIndicator(),
-                        size: 100.0,
+                        size: 40.0,
                         color: Colors.deepPurple[900]),
                   );
                 default:
@@ -66,19 +76,69 @@ class _HomeState extends State<Home> {
                       "Erro ao carregar",
                       textAlign: TextAlign.center,
                     ));
-                  }
-                  else {
-                    dolar = snapshot.data["results"]["currencies"]["USD"]["buy"];
-                    euro  = snapshot.data["results"]["currencies"]["EUR"]["buy"];
-                    return Container();
-                    // return SingleChildScrollView(
-                    //   child: Column(
-                    //     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    //     children: <Widget>[
-                    //       Icon(Icons.attach_money, size: 150.0,)
-                    //     ],
-                    //   ),
-                    // );
+                  } else {
+                    dolar =
+                        snapshot.data["results"]["currencies"]["USD"]["buy"];
+                    euro = snapshot.data["results"]["currencies"]["EUR"]["buy"];
+                    return SingleChildScrollView(
+                      padding: EdgeInsets.all(10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Image.asset(
+                            "images/coin_image.png",
+                            height: 200.0,
+                          ),
+                          TextField(
+                            decoration: InputDecoration(
+                              labelText: "Real",
+                              labelStyle: TextStyle(
+                                color: Colors.indigo[300],
+                              ),
+                              border: OutlineInputBorder(),
+                              prefixText: "R\$ ",
+                            ),
+                            style: TextStyle(
+                              color: Colors.indigo[600],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15.0,
+                            ),
+                          ),
+                          Divider(),
+                          TextField(
+                            decoration: InputDecoration(
+                              labelText: "Dólar",
+                              labelStyle: TextStyle(
+                                color: Colors.indigo[300],
+                              ),
+                              border: OutlineInputBorder(),
+                              prefixText: "RS\$ ",
+                            ),
+                            style: TextStyle(
+                              color: Colors.indigo[600],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15.0,
+                            ),
+                          ),
+                          Divider(),
+                          TextField(
+                            decoration: InputDecoration(
+                              labelText: "Euro",
+                              labelStyle: TextStyle(
+                                color: Colors.indigo[300],
+                              ),
+                              border: OutlineInputBorder(),
+                              prefixText: "€ ",
+                            ),
+                            style: TextStyle(
+                              color: Colors.indigo[600],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15.0,
+                            ),
+                          ),                          
+                        ],
+                      ),
+                    );
                   }
               }
             }),
